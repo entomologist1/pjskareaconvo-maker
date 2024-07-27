@@ -6,7 +6,7 @@ anyway! this is something to make putting together my pjsk area convo code a bit
 
 - [applet here](https://pjsk-area-convo-maker.streamlit.app/)
 - toyhou.se listing (applet)
-- toyhou.se listing (code)
+- [toyhou.se listing (code)](https://toyhou.se/26394659.pjsk-area-conversation-f2u)
 
 ### things to note:
 - the HTML itself is still mobile friendly, bootstrap colors with some custom colors
