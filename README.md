@@ -10,7 +10,7 @@ anyway! this is something to make putting together my pjsk area convo code a bit
 ### things to note:
 - the HTML itself is still mobile friendly, bootstrap colors with some custom colors
 - i dont know why the buttons for rearranging the area convos are weird. sorrrryyyyyy
-- i suggest putting the exported HTML into circlejourney and formatting it bc its really messy xP
+- i suggest putting the exported HTML into circlejourney and formatting it xP
 
 ### credits:
 - sekai.best for assets, Elithian for HTML resources, pjsk is still colopale's
