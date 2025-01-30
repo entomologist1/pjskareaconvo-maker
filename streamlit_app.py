@@ -1,5 +1,3 @@
-# run python -m streamlit run "C:\Users\hussa\Desktop\testtest.py" to test
-
 #create obj Speaker (holds for Speechbox) 
 #(INPUT: string name, string imageURL, hexcode(?) color)
 class Speaker:
@@ -84,8 +82,6 @@ class AreaConvo:
             print(toswap)
             self.listOfDialogue[toindex-1] = self.listOfDialogue[toindex]
             self.listOfDialogue[toindex] = toswap
-        else:
-            print("NO! Top of list")
 
             
     def moveDownDialogue(self, toindex):
@@ -94,8 +90,6 @@ class AreaConvo:
             toswap = self.listOfDialogue[toindex+1]
             self.listOfDialogue[toindex+1] = self.listOfDialogue[toindex]
             self.listOfDialogue[toindex] = toswap
-        else:
-            print("NO! Bottom of list")
         
 
     def __init__(self):
