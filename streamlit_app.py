@@ -52,7 +52,7 @@ class Dialoguebox:
 
 #create obj AreaConvo (keep in list for overall editing, holds the dialogue between ocs)
 #couldve been a list within a list tbh. But i love <3 objects
-#(INPUT: string title)
+#(INPUT: string title, background image)
 class AreaConvo:
     #define
     listOfDialogue = []
