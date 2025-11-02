@@ -1,3 +1,6 @@
+import random
+import streamlit as st
+
 #create obj Speaker (holds for Speechbox) 
 #(INPUT: string name, string imageURL, hexcode(?) color)
 class Speaker:
@@ -11,7 +14,7 @@ class Speaker:
   def __str__(self):
     return f"{self.name}, {self.color}"    
   
-  def __eq__(self, other) : 
+  def __eq__(self, other): 
     if self.name == other.name \
     and self.imageURL == other.imageURL \
     and self.color == other.color:
@@ -26,6 +29,7 @@ class Speaker:
   def editColor(self, newColor):
      self.color = newColor
   
+
 #create obj Dialoguebox (for ocs' individual dialogue) 
 #(INPUT: Speaker speaker, string dialogue)
 class Dialoguebox:
@@ -40,22 +44,67 @@ class Dialoguebox:
     def getDialogueCode(self):
         #text to return
         #rlly its speechbox start but whatever
-        dialogueCode = '<!-- SPEECHBOX START -->\n	<div class="row no-gutters" style="margin: 10px 0px 10px 0px;">\n		<!-- icon -->\n		<!-- !!EDIT!! background-image url should be changed! -->\n		<div class="card col-md-2 col-4 p-1" style="border: none; \n		        border-radius: 25px;\n				overflow: hidden; \n				width: 100%; \n				min-height: 75px; \n				background-size: contain; \n				background-repeat: no-repeat;\n				background-position: center;\n				background-image:url(\'' + self.speaker.imageURL + '\');">\n		</div>\n		<!-- textbox -->\n		<div class="card col-md-10 col-8 p-1" style="border: none;">\n			<div class="bg-faded p-4 h-100" style="clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 24% 85%, 0 100%, 10% 85%, 0% 85%);\n							margin-left: 20px; \n							border-radius: 5px; \n							min-height: 100px; \n                            border-top: 10px solid ' + self.speaker.color + '  ;">\n				<!-- !!EDIT!! text here! -->\n				<p align="center"> '+ self.dialogue +' </p>\n				<br>\n			</div>\n			<!-- !!EDIT!! replace self.speaker.color with whatever color u want-->\n			<div class="bg-faded p-12 h-100" style="\n                    							margin: -25px 0px 0px 0px; \n                    							margin-left: 70%;\n                    							background-color:  '+ self.speaker.color +'  ;\n                    							z-index: 10;\n                                                margin-left: auto;\n                                                width: 33%;\n                    							min-width: 25px;\n                    							max-width: 100px;\n							                    border-radius: 5px; \n							                    max-height: 25px;">\n				<!-- !!EDIT!! edit name here! -->\n				<p align="center">'+ self.speaker.name +'</p>\n			</div>\n		</div>\n	</div>\n'
-        #print(dialogueCode)
+        dialogueCode = (
+            '<!-- SPEECHBOX START -->\n'
+            '	<div class="row no-gutters" style="margin: 10px 0px 10px 0px;">\n'
+            '		<!-- icon -->\n'
+            '		<!-- !!EDIT!! background-image url should be changed! -->\n'
+            '		<div class="card col-md-2 col-4 p-1" style="border: none; \n'
+            '		        border-radius: 25px;\n'
+            '				overflow: hidden; \n'
+            '				width: 100%; \n'
+            '				min-height: 75px; \n'
+            '				background-size: contain; \n'
+            '				background-repeat: no-repeat;\n'
+            '				background-position: center;\n'
+            f"				background-image:url('{self.speaker.imageURL}');\">\n"
+            '		</div>\n'
+            '		<!-- textbox -->\n'
+            '		<div class="card col-md-10 col-8 p-1" style="border: none;">\n'
+            '			<div class="bg-faded p-4 h-100" style="clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 24% 85%, 0 100%, 10% 85%, 0% 85%);\n'
+            '							margin-left: 20px; \n'
+            '							border-radius: 5px; \n'
+            '							min-height: 100px; \n'
+            f'                            border-top: 10px solid {self.speaker.color}  ;">\n'
+            '				<!-- !!EDIT!! text here! -->\n'
+            f'				<p align="center"> {self.dialogue} </p>\n'
+            '				<br>\n'
+            '			</div>\n'
+            '			<!-- !!EDIT!! replace self.speaker.color with whatever color u want-->\n'
+            '			<div class="bg-faded p-12 h-100" style="\n'
+            '                    							margin: -25px 0px 0px 0px; \n'
+            '                    							margin-left: 70%;\n'
+            f'                    							background-color:  {self.speaker.color}  ;\n'
+            '                    							z-index: 10;\n'
+            '                                                margin-left: auto;\n'
+            '                                                width: 33%;\n'
+            '                    							min-width: 25px;\n'
+            '                    							max-width: 100px;\n'
+            '							                    border-radius: 5px; \n'
+            '							                    max-height: 25px;">\n'
+            '				<!-- !!EDIT!! edit name here! -->\n'
+            f'				<p align="center">{self.speaker.name}</p>\n'
+            '			</div>\n'
+            '		</div>\n'
+            '	</div>\n'
+        )
         return dialogueCode
 
     #to string (to export as html file) (fix later lol)
     def __str__(self):
         return f"{self.speaker.name}: {self.dialogue}"  
 
+
 #create obj AreaConvo (keep in list for overall editing, holds the dialogue between ocs)
 #couldve been a list within a list tbh. But i love <3 objects
 #(INPUT: string title, background image)
 class AreaConvo:
     #define
-    listOfDialogue = []
-    title = ""
-    backimageURL = "Background image URL here"
+    def __init__(self, title):
+        self.title = title
+        self.listOfDialogue = []
+        self.backimageURL = "Background image URL here"
+        self.toToggle = "a" + str(random.randint(1, 9999999999))
 
     #forgot about this
     def editBackimageURL(self, imageURL):
@@ -67,7 +116,6 @@ class AreaConvo:
 
     #button to remove dialogueboxes
     def removeDialogue(self, toindex):
-        #self.listOfDialogue.remove(Dialoguebox(speaker, dialogue))
         self.listOfDialogue.pop(toindex)
 
     #button to edit dialogueboxes
@@ -75,78 +123,64 @@ class AreaConvo:
         self.listOfDialogue[toindex] = Dialoguebox(speaker, dialogue)
 
     def moveUpDialogue(self, toindex):
-        print(len(self.listOfDialogue))
-        if (toindex >= 1) :
-            print(self.listOfDialogue[toindex-1])
-            toswap = self.listOfDialogue[toindex-1]
-            print(toswap)
-            self.listOfDialogue[toindex-1] = self.listOfDialogue[toindex]
-            self.listOfDialogue[toindex] = toswap
+        if toindex >= 1:
+            self.listOfDialogue[toindex - 1], self.listOfDialogue[toindex] = (
+                self.listOfDialogue[toindex],
+                self.listOfDialogue[toindex - 1],
+            )
 
-            
     def moveDownDialogue(self, toindex):
-        print(len(self.listOfDialogue))
-        if (toindex < (len(self.listOfDialogue)-1)) :
-            toswap = self.listOfDialogue[toindex+1]
-            self.listOfDialogue[toindex+1] = self.listOfDialogue[toindex]
-            self.listOfDialogue[toindex] = toswap
-        
-
-    def __init__(self):
-        pass
-
-    def __init__(self, title):
-        self.title = title
+        if toindex < len(self.listOfDialogue) - 1:
+            self.listOfDialogue[toindex + 1], self.listOfDialogue[toindex] = (
+                self.listOfDialogue[toindex],
+                self.listOfDialogue[toindex + 1],
+            )
 
     #not needed but i <3 __str__ function
     def __str__(self):
-       #toreturn = "\n - ".join(str(x) for x in self.listOfDialogue)
-       #return self.title.join(toreturn)
        return f"AREACONVO STRING - {self.title}" 
     
     #sortable items only work nicely with lists of strings
     #this returns the list as a list of strings
     #in the most annoying way possible <3
     def returnStrList(self):
-        toreturn = self.listOfDialogue.copy()
-        counter = 0
-        for x in toreturn:
-           toreturn[counter] = str(x)
-           #print(toreturn[counter])
-           counter = counter + 1 #im too c++pilled for this
-       
-        return toreturn
+        return [str(x) for x in self.listOfDialogue]
     
-    import random
-    areaConvoCode = ""
-    toToggle = "a" + str(random.randint(1, 9999999999))
-
     def returnAreaConvoCode(self):
-        toreturn = self.listOfDialogue.copy()
-        counter = 0
-        speechboxes = ""
-        for x in toreturn:
-           speechboxes = speechboxes + (toreturn[counter].getDialogueCode())
-           #print(counter)
-           #print(toreturn[counter].getDialogueCode())
-           counter = counter + 1 #im too c++pilled for this
-       
-        speechboxes1 =  '<!-- !!EDIT!! -->\n		<!-- here all controls are denoted by ' + self.toToggle + '-->\n		<div>\n		    \n			<!--toggle visual -->\n		    <!-- !!EDIT!! edit background-image:url here -->\n			<div class="card p-3 mb-2" role="tab" id="headingclosed1" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 8% 100%, 0% 50%); background-size: cover; background-position: center; background-image:url(\'' + self.backimageURL + '\'); text-align: right; border: none;">\n				<a data-toggle="collapse" data-parent="#allclosed" href="#' + self.toToggle + '" aria-expanded="false" aria-controls="' + self.toToggle + '">\n					<div class="mb-0">\n						<h2 style="text-shadow: #ddffb6 1px 0 10px; letter-spacing: 1px">\n							<span class="far" style="color: black; margin-right: 75px">' + self.title + '</span>\n						</h2>\n					</div>\n				</a>\n			</div>\n			\n			<!--content -->\n			<div id="' + self.toToggle + '" class="collapse" role="tabpanel" aria-labelledby="headingclosed1" data-parent="#allclosed">\n				<!-- DIALOGUE START --><div class="card" style="min-height:100px; \n				padding: 15px 25px 15px 35px;  \n				margin: 25px;">\n				\n				    <!-- !!EDIT!! paste dialogue code here :p -->\n				    ' +  speechboxes + '\n				\n				<!-- DIALOGUE END -->\n			</div>\n		</div>'       
-        
+        speechboxes = "".join([d.getDialogueCode() for d in self.listOfDialogue])
+        speechboxes1 = (
+            f'<!-- !!EDIT!! -->\n'
+            f'		<!-- here all controls are denoted by {self.toToggle}-->\n'
+            f'		<div>\n'
+            f'			<div class="card p-3 mb-2" role="tab" id="headingclosed1" style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 8% 100%, 0% 50%); background-size: cover; background-position: center; background-image:url(\'{self.backimageURL}\'); text-align: right; border: none;">\n'
+            f'				<a data-toggle="collapse" data-parent="#allclosed" href="#{self.toToggle}" aria-expanded="false" aria-controls="{self.toToggle}">\n'
+            f'					<div class="mb-0">\n'
+            f'						<h2 style="text-shadow: #ddffb6 1px 0 10px; letter-spacing: 1px">\n'
+            f'							<span class="far" style="color: black; margin-right: 75px">{self.title}</span>\n'
+            f'						</h2>\n'
+            f'					</div>\n'
+            f'				</a>\n'
+            f'			</div>\n'
+            f'			<div id="{self.toToggle}" class="collapse" role="tabpanel" aria-labelledby="headingclosed1" data-parent="#allclosed">\n'
+            f'				<div class="card" style="min-height:100px; padding: 15px 25px 15px 35px; margin: 25px;">\n'
+            f'				    {speechboxes}\n'
+            f'				</div>\n'
+            f'			</div>\n'
+            f'		</div>'
+        )
         return speechboxes1
     
     def returnSingularAreaConvoCode(self):
-        toreturn = self.listOfDialogue.copy()
-        counter = 0
-        speechboxes = '<div class="card" style="min-height:100px; \n				padding: 15px 25px 15px 35px;  \n				margin: 25px;">\n    \n	'
-        for x in toreturn:
-           speechboxes = speechboxes + (toreturn[counter].getDialogueCode())
-           #print(counter)
-           #print(toreturn[counter].getDialogueCode())
-           counter = counter + 1 #im too c++pilled for this
+        speechboxes = "".join([d.getDialogueCode() for d in self.listOfDialogue])
+        return (
+            '<div class="card" style="min-height:100px; \n'
+            '				padding: 15px 25px 15px 35px;  \n'
+            '				margin: 25px;">\n'
+            f'{speechboxes}\n'
+            '</div>'
+        )
 
-        return speechboxes
-    
+
 # Main function to execute program
 def main():
     #for debugging
@@ -156,7 +190,6 @@ def main():
     print("Hello, how are you")
 
     #import
-    import streamlit as st
     #from streamlit_sortables import sort_items
 
     #create default speakers 
@@ -166,9 +199,7 @@ def main():
     #check if theres any speakers already in session
     if 'listOfSpeakers' not in st.session_state:
         print("No speakers found in session!")
-        st.session_state['listOfSpeakers'] = []
-        st.session_state['listOfSpeakers'].append(janeDoe)
-        st.session_state['listOfSpeakers'].append(johnBrown)
+        st.session_state['listOfSpeakers'] = [janeDoe, johnBrown]
         print("Added speakers to session")
 
     #check if theres any areaconvos already in session
@@ -176,38 +207,26 @@ def main():
         print("No area convos found in session!")
         defaultAreaConvo = AreaConvo("The beginning")
         defaultAreaConvo.addDialogue(st.session_state['listOfSpeakers'][0], "Hello world")
-        st.session_state['listOfAreaConvo'] = []
-        st.session_state['listOfAreaConvo'].append(defaultAreaConvo)
-
-        #set default selection
+        st.session_state['listOfAreaConvo'] = [defaultAreaConvo]
         st.session_state['currentAreaConvoSelect'] = 0
-
-        #create string list
-        st.session_state['listOfAreaConvoTitles'] = st.session_state['listOfAreaConvo'].copy()
-        counter = 0
-        for x in st.session_state['listOfAreaConvoTitles']:
-           st.session_state['listOfAreaConvoTitles'][counter] = x.title
-           counter = counter + 1 
-
+        st.session_state['listOfAreaConvoTitles'] = [x.title for x in st.session_state['listOfAreaConvo']]
         print("Added area convo to session")
 
     #load speakers from session
     print("Loading speakers from session")
     debugListSpeakers()
-    #st.session_state
-    #LETS GOOO FIRST TRY (took me 10000 years to wrap my head around session state)
     
     st.header('PJSK Area Conversation Put-Togetherer', divider='violet')
     intro = '''hi!!!! this is an app to hopefully(?) make putting together the <a href='https://toyhou.se/26394659.pjsk-area-conversation-f2u'> pjsk area convo code</a> easier ^^  
     never used streamlit before but i hope it makes things slightly easier'''
-    st.markdown(intro, unsafe_allow_html = True)
+    st.markdown(intro, unsafe_allow_html=True)
 
     notes = '''
     <b>notes:</b>
     - no i dont know why the buttons for rearranging the area convos are weird Sorry
     - unfortunately it does not save your work once u exit so u have to put it together all at once T_T
     - its kinda really scuffed so let me know if theres any bugs or weird things happening on <a href='https://toyhou.se/entomologist'>toyhou.se</a> or <a href='https://github.com/entomologist1'>github</a>'''
-    st.markdown(notes, unsafe_allow_html = True)
+    st.markdown(notes, unsafe_allow_html=True)
 
     #display list of speakers
     st.header('Speaker Controls', divider='violet')
