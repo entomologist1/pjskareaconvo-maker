@@ -390,10 +390,20 @@ def main():
 
             def addCurrAreaConvo():
                 defaultAddAreaConvo = AreaConvo("An example")
-                defaultAddAreaConvo.addDialogue(st.session_state['listOfSpeakers'][1], " Ugh ")
-                defaultAddAreaConvo.addDialogue(st.session_state['listOfSpeakers'][0], " Why the long face :D ")
+                speakers = st.session_state['listOfSpeakers']
+
+                # Always use at least one valid speaker
+                if len(speakers) >= 2:
+                    defaultAddAreaConvo.addDialogue(speakers[1], " Ugh ")
+                    defaultAddAreaConvo.addDialogue(speakers[0], " Why the long face :D ")
+                else:
+                    # fallback if only one speaker exists
+                    defaultAddAreaConvo.addDialogue(speakers[0], " Saki boo hoo")
+
+                # Update the session lists
                 st.session_state['listOfAreaConvo'].append(defaultAddAreaConvo)
-                st.session_state['listOfAreaConvoTitles'].append("An example")
+                st.session_state['listOfAreaConvoTitles'].append(defaultAddAreaConvo.title)
+
             addAreaConvo = st.button("Add area convo:", key='addAreaConvo', on_click=addCurrAreaConvo, help="Add an area convo")
             
             def deleteCurrAreaConvo():
