@@ -181,6 +181,7 @@ class AreaConvo:
         )
 
 
+# Main function to execute program
 def main():
     #for debugging
     def debugListSpeakers():
@@ -211,10 +212,6 @@ def main():
         st.session_state['listOfAreaConvoTitles'] = [x.title for x in st.session_state['listOfAreaConvo']]
         print("Added area convo to session")
 
-    # initialize session state for dialogue selection
-    if 'dialogueSelectTheIndex' not in st.session_state:
-        st.session_state['dialogueSelectTheIndex'] = 0
-
     #load speakers from session
     print("Loading speakers from session")
     debugListSpeakers()
@@ -240,7 +237,7 @@ def main():
         #show list of speakers, current speaker, and its index
         selectSpeaker = st.selectbox("List of Speakers", st.session_state['listOfSpeakers'])
         #st.write("Current speaker:", selectSpeaker)
-        selectSpeakerIndex = st.session_state['listOfSpeakers'].index(selectSpeaker)
+        selectSpeakerIndex = st.session_state['listOfSpeakers'].index(Speaker(selectSpeaker.name, selectSpeaker.imageURL, selectSpeaker.color))
         
         #create new speaker 
         with st.expander("Create new speaker"):
@@ -273,6 +270,7 @@ def main():
                     st.session_state['listOfSpeakers'][selectSpeakerIndex].editName(st.session_state.newEditSpeakerName)
                     debugListSpeakers()
                 editSpeakerName = st.text_input("Edit:", selectSpeaker.name, key='newEditSpeakerName', on_change=nameChanged, help="Here, you can change the name of the speaker", label_visibility="hidden")
+                #selectSpeaker
 
             with col2image:
                 st.markdown("<p style='text-align: center;'>edit image</p>", unsafe_allow_html=True)
@@ -288,7 +286,7 @@ def main():
                 def colorChanged():
                     st.session_state['listOfSpeakers'][selectSpeakerIndex].editColor(st.session_state.newEditSpeakerColor)
                     debugListSpeakers()
-                editSpeakerColor = st.color_picker("Edit:", selectSpeaker.color, key='newEditSpeakerColor', on_change=colorChanged, help="Here, you can change the color of the speaker", label_visibility="hidden")
+                editSpeakerImage = st.color_picker("Edit:", selectSpeaker.color, key='newEditSpeakerColor', on_change=colorChanged, help="Here, you can change the color of the speaker", label_visibility="hidden")
                 
             def deleteCurrSpeaker():
                 if (len(st.session_state['listOfSpeakers']) > 1):
@@ -296,32 +294,36 @@ def main():
                 else:
                     st.warning('DELETE SPEAKER ERROR: Cannot have empty list of speakers', icon="⚠️")
                 debugListSpeakers()
-            st.button("Delete this speaker:", key='deleteSpeaker', on_click=deleteCurrSpeaker, help="Delete the current speaker")
+            editSpeakerImage = st.button("Delete this speaker:", key='deleteSpeaker', on_click=deleteCurrSpeaker, help="Delete the current speaker")
                 
 
     ######### area convo editing
 
+    # test area conversation
+    #areaconvo1 = AreaConvo("An example")
+    #areaconvo1.addDialogue(st.session_state['listOfSpeakers'][0], "Ughhhhhhhhhhhhh")
+
     st.header('Area Conversation Controls', divider='violet')
 
     #overall area convo 
+    #TODO Change sortable to selectable? T_T...
     st.subheader('Add, delete and reorder area conversations')
+    #testArrangeAreaConvo = sort_items(st.session_state['listOfAreaConvoTitles'], direction='vertical', key='arrangeAreaConvo')
+    
+    testSelectboxArrangeAreaConvo = st.selectbox("Select area convo", st.session_state['listOfAreaConvoTitles'])
+    #(testSelectboxArrangeAreaConvo)
+    currentAreaConvoSelect = st.session_state['listOfAreaConvoTitles'].index(testSelectboxArrangeAreaConvo)
+    #(currentAreaConvoSelect)
 
-    # initialize session state for area convo selection
-    if 'currentAreaConvoSelect' not in st.session_state:
-        st.session_state['currentAreaConvoSelect'] = 0
+    st.session_state['listOfAreaConvoTitles']
 
-    # dynamically rebuild listOfAreaConvoTitles
-    st.session_state['listOfAreaConvoTitles'] = [x.title for x in st.session_state['listOfAreaConvo']]
-
-    testSelectboxArrangeAreaConvo = st.selectbox(
-        "Select area convo",
-        st.session_state['listOfAreaConvoTitles'],
-        index=st.session_state['currentAreaConvoSelect']  # use session state
-    )
-
-    # update session state when user manually selects
-    st.session_state['currentAreaConvoSelect'] = st.session_state['listOfAreaConvoTitles'].index(testSelectboxArrangeAreaConvo)
-    currentAreaConvoSelect = st.session_state['currentAreaConvoSelect']
+    #test changes to area convo list
+    #st.session_state['listOfAreaConvoTitles']
+    #st.session_state['listOfAreaConvo']
+    counter = 0
+    for x in st.session_state['listOfAreaConvoTitles']:
+        #st.session_state['listOfAreaConvoTitles'][counter]
+        counter = counter + 1 
 
     with st.container(height=400, border=False):
 
@@ -330,46 +332,57 @@ def main():
         #TODO move current area convo up or down
         with col1select:
             st.markdown("<p style='text-align: center;'>move area convo</p>", unsafe_allow_html=True)
+            #st.session_state['currentAreaConvoSelect'] = st.number_input("Insert a number", min_value=0, max_value=len(st.session_state['listOfAreaConvoTitles'])-1)
+            #currentAreaConvoSelect = st.session_state['currentAreaConvoSelect']
 
-            # Move up area convo
-            def moveUpCurrAreaConvo():
-                print("Move up AreaConvo")
-                idx = st.session_state['currentAreaConvoSelect']
-                if idx >= 1:
-                    # swap objects
-                    st.session_state['listOfAreaConvo'][idx - 1], st.session_state['listOfAreaConvo'][idx] = (
-                        st.session_state['listOfAreaConvo'][idx],
-                        st.session_state['listOfAreaConvo'][idx - 1],
-                    )
-                    # auto-select the moved area convo
-                    st.session_state['currentAreaConvoSelect'] = idx - 1
+        def moveUpCurrAreaConvo():
+            print("Move up AreaConvo")
 
-            st.button("Move area convo up", key='moveUpAreaConvoButton', on_click=moveUpCurrAreaConvo, help="Move current area convo up")
+            if (currentAreaConvoSelect >= 1) :
+                toswaptitle = st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect-1]
+                st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect-1] = st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect]
+                st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect] = toswaptitle
 
-            # Move down area convo
-            def moveDownCurrAreaConvo():
-                print("Move down AreaConvo")
-                idx = st.session_state['currentAreaConvoSelect']
-                if idx < len(st.session_state['listOfAreaConvo']) - 1:
-                    st.session_state['listOfAreaConvo'][idx + 1], st.session_state['listOfAreaConvo'][idx] = (
-                        st.session_state['listOfAreaConvo'][idx],
-                        st.session_state['listOfAreaConvo'][idx + 1],
-                    )
-                    # auto-select the moved area convo
-                    st.session_state['currentAreaConvoSelect'] = idx + 1
+                toswap = st.session_state['listOfAreaConvo'][currentAreaConvoSelect-1]
+                st.session_state['listOfAreaConvo'][currentAreaConvoSelect-1] = st.session_state['listOfAreaConvo'][currentAreaConvoSelect]
+                st.session_state['listOfAreaConvo'][currentAreaConvoSelect] = toswap
+            else:
+                print("NO! Top of list")
+                
+        moveupAreaConvoBox = st.button("Move area convo up", key='moveUpAreaConvoButton', on_click=moveUpCurrAreaConvo, help="Move current area convo up")
 
-            st.button("Move area convo down", key='moveDownAreaConvoButton', on_click=moveDownCurrAreaConvo, help="Move current area convo down")
+        def moveDownCurrAreaConvo():
+            print("Move down AreaConvo")
 
+            if (currentAreaConvoSelect < (len(st.session_state['listOfAreaConvo'])-1)) :
+                toswaptitle = st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect+1]
+                st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect+1] = st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect]
+                st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect] = toswaptitle
+
+                toswap = st.session_state['listOfAreaConvo'][currentAreaConvoSelect+1]
+                st.session_state['listOfAreaConvo'][currentAreaConvoSelect+1] = st.session_state['listOfAreaConvo'][currentAreaConvoSelect]
+                st.session_state['listOfAreaConvo'][currentAreaConvoSelect] = toswap
+            else:
+                print("NO! Bottom of list")
+                
+        movedownAreaConvoBox = st.button("Move area convo  down", key='moveDownAreaConvoButton', on_click=moveDownCurrAreaConvo, help="Move current area convo down")
+
+
+
+            
         #edit name of area convo
         with col2edit:
             st.markdown("<p style='text-align: center;'>edit area convo title</p>", unsafe_allow_html=True)
             def areaTitleNameChanged():
-                st.session_state['listOfAreaConvo'][currentAreaConvoSelect].title = st.session_state.newEditAreaTitleName
-            editAreaTitleName = st.text_input("Edit Area Convo Title:", st.session_state['listOfAreaConvo'][currentAreaConvoSelect].title, key='newEditAreaTitleName', on_change=areaTitleNameChanged, help="You can change the name of the area convo")
+                    st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect] = (st.session_state.newEditAreaTitleName)
+                    st.session_state['listOfAreaConvo'][currentAreaConvoSelect].title = (st.session_state.newEditAreaTitleName)
+                    debugListSpeakers()
+            editAreaTitleName = st.text_input("Edit Area Convo Title:", st.session_state['listOfAreaConvoTitles'][currentAreaConvoSelect], key='newEditAreaTitleName', on_change=areaTitleNameChanged, help="You can change the name of the area convo")
 
             def areaURLNameChanged():
-                st.session_state['listOfAreaConvo'][currentAreaConvoSelect].backimageURL = st.session_state.newEditAreaURLName
+                    st.session_state['listOfAreaConvo'][currentAreaConvoSelect].backimageURL = (st.session_state.newEditAreaURLName)
             editAreaURLName = st.text_input("Edit Area Convo URL:", st.session_state['listOfAreaConvo'][currentAreaConvoSelect].backimageURL, key='newEditAreaURLName', on_change=areaURLNameChanged, help="You can change the area convo's image URL")
+            #st.session_state['listOfAreaConvo'][currentAreaConvoSelect].backimageURL
 
         #add or delete area convo
         with col3adddel:
@@ -384,81 +397,87 @@ def main():
                     defaultAddAreaConvo.addDialogue(speakers[1], " Ugh ")
                     defaultAddAreaConvo.addDialogue(speakers[0], " Why the long face :D ")
                 else:
+                    # fallback if only one speaker exists
                     defaultAddAreaConvo.addDialogue(speakers[0], " Saki boo hoo")
 
                 # Update the session lists
                 st.session_state['listOfAreaConvo'].append(defaultAddAreaConvo)
                 st.session_state['listOfAreaConvoTitles'].append(defaultAddAreaConvo.title)
 
-            st.button("Add area convo:", key='addAreaConvo', on_click=addCurrAreaConvo, help="Add an area convo")
+            addAreaConvo = st.button("Add area convo:", key='addAreaConvo', on_click=addCurrAreaConvo, help="Add an area convo")
             
             def deleteCurrAreaConvo():
-                if (len(st.session_state['listOfAreaConvo']) > 1):
-                    idx = st.session_state['currentAreaConvoSelect']
-                    st.session_state['listOfAreaConvo'].pop(idx)
-                    st.session_state['listOfAreaConvoTitles'].pop(idx)
-                    # adjust selection if necessary
-                    if idx >= len(st.session_state['listOfAreaConvo']):
-                        st.session_state['currentAreaConvoSelect'] = len(st.session_state['listOfAreaConvo']) - 1
+                if (len(st.session_state['listOfAreaConvo']) > 1) and (len(st.session_state['listOfAreaConvoTitles']) > 1) :
+                    st.session_state['listOfAreaConvo'].pop(currentAreaConvoSelect)
+                    st.session_state['listOfAreaConvoTitles'].pop(currentAreaConvoSelect)
                 else:
                     st.warning('DELETE AREA CONVO ERROR: Cannot have empty list of area convos', icon="⚠️")
-            st.button("Delete this area convo:", key='deleteAreaConvo', on_click=deleteCurrAreaConvo, help="Delete the current area convo")
-
+            delAreaConvo = st.button("Delete this area convo:", key='deleteAreaConvo', on_click=deleteCurrAreaConvo, help="Delete the current area convo")
+                
     #CURRENT AREA CONVO
-    currentAreaConvo = st.session_state['listOfAreaConvo'][st.session_state['currentAreaConvoSelect']]
+    currentAreaConvo = st.session_state['listOfAreaConvo'][currentAreaConvoSelect]
 
     st.subheader('Add, delete and reorder dialogues')
-    dialogueStrList = currentAreaConvo.returnStrList()
+    #current dialogue selection
 
-    dialogueSelectTheIndex = st.selectbox(
-        "selectbox",
-        range(len(dialogueStrList)),
-        index=st.session_state['dialogueSelectTheIndex'],  # use session state
-        format_func=lambda x: dialogueStrList[x]
-    )
+    #TODO remove this and replace for selectbox???? T_T T_T T_T
+    #currentAreaConvo.listOfDialogue = sort_items(currentAreaConvo.returnStrList(), direction='vertical', key='arrangeDialogue')
+    #st.write(f'sorted_items: {currentAreaConvo.listOfDialogue}')
 
-    # update session state when user manually selects
-    st.session_state['dialogueSelectTheIndex'] = dialogueSelectTheIndex
+    dialogueSelectTheIndex = st.selectbox("selectbox", range(len(currentAreaConvo.returnStrList())), format_func=lambda x: currentAreaConvo.returnStrList()[x])
+    dialogueSelect = currentAreaConvo.returnStrList()[dialogueSelectTheIndex]
 
+    st.write(currentAreaConvo.returnStrList() )
+    
     with st.container(height=250, border=True):
+            
         st.markdown("<p style='text-align: center;'>edit dialogue</p>", unsafe_allow_html=True)
 
-        selectSpeakerCurrArea = st.selectbox("Speakers Available", st.session_state['listOfSpeakers'])
-        editDialogueContent = st.text_input("Edit text:", currentAreaConvo.listOfDialogue[dialogueSelectTheIndex].dialogue, key='newEditDialogueContent')
-
         def dialogueContentChanged():
-            currentAreaConvo.editDialogue(dialogueSelectTheIndex, selectSpeakerCurrArea, editDialogueContent)
+                    st.session_state['listOfAreaConvo'][currentAreaConvoSelect].editDialogue(dialogueSelectTheIndex, selectSpeakerCurrArea, (st.session_state.newEditDialogueContent))
+                    #debugListSpeakers()
+                    #It worked. I am free
 
-        st.button("Apply changes", on_click=dialogueContentChanged)
+        selectSpeakerCurrArea = st.selectbox("Speakers Available", st.session_state['listOfSpeakers'], help="sorry its rlly annoying but u have to edit the text before changes in speaker apply... iknow i know")
+        #st.write("Current speaker:", selectSpeakerCurrArea)
+        selectSpeakerIndexCurrArea = st.session_state['listOfSpeakers'].index(Speaker(selectSpeaker.name, selectSpeaker.imageURL, selectSpeaker.color))
+        editDialogueContent = st.text_input("Edit text:", st.session_state['listOfAreaConvo'][currentAreaConvoSelect].listOfDialogue[0].dialogue, key='newEditDialogueContent', on_change=dialogueContentChanged, help="Hit enter to apply changes")
+
+
 
     col1edit, col2adddel = st.columns(2)
     with col1edit:
         st.markdown("<p style='text-align: center;'>reorder dialogue</p>", unsafe_allow_html=True)
 
-        # Move dialogue up
         def moveUpCurrDialogue():
-            currentAreaConvo.moveUpDialogue(dialogueSelectTheIndex)
-            # auto-select the dialogue at new position
-            if dialogueSelectTheIndex > 0:
-                st.session_state['dialogueSelectTheIndex'] = dialogueSelectTheIndex - 1
+                print("Move up")
+                st.session_state['listOfAreaConvo'][currentAreaConvoSelect].moveUpDialogue(dialogueSelectTheIndex)
+                
+        moveupDialogueBox = st.button("Move dialogue box up", key='moveUpDialogueButton', on_click=moveUpCurrDialogue, help="Move current dialogue box up")
 
-        st.button("Move dialogue box up", key='moveUpDialogueButton', on_click=moveUpCurrDialogue, help="Move current dialogue box up")
-
-        # Move dialogue down
         def moveDownCurrDialogue():
-            currentAreaConvo.moveDownDialogue(dialogueSelectTheIndex)
-            # auto-select the dialogue at new position
-            if dialogueSelectTheIndex < len(currentAreaConvo.listOfDialogue) - 1:
-                st.session_state['dialogueSelectTheIndex'] = dialogueSelectTheIndex + 1
+                print("Move down")
+                st.session_state['listOfAreaConvo'][currentAreaConvoSelect].moveDownDialogue(dialogueSelectTheIndex)
+                
+        movedownDialogueBox = st.button("Move dialogue box down", key='moveDownDialogueButton', on_click=moveDownCurrDialogue, help="Move current dialogue box down")
 
-        st.button("Move dialogue box down", key='moveDownDialogueButton', on_click=moveDownCurrDialogue, help="Move current dialogue box down")
+        
 
     with col2adddel:
         st.markdown("<p style='text-align: center;'>add or delete dialogue</p>", unsafe_allow_html=True)
 
-        st.button("Add dialogue box", key='addDialogueButton', on_click=lambda: currentAreaConvo.addDialogue(selectSpeakerCurrArea, "BLANK"), help="Add a dialogue box")
-        st.button("Remove dialogue box", key='removeDialogueButton', on_click=lambda: currentAreaConvo.removeDialogue(dialogueSelectTheIndex) if len(currentAreaConvo.listOfDialogue) > 1 else st.warning('AREA CONVO ERROR: Must have at least one dialogue box', icon="⚠️"), help="Remove current dialogue box")
+        def addCurrDialogue():
+                st.session_state['listOfAreaConvo'][currentAreaConvoSelect].addDialogue(selectSpeakerCurrArea, "BLANK")
+                
+        addDialogue = st.button("Add dialogue box", key='addDialogueButton', on_click=addCurrDialogue, help="Add a dialogue box")
 
+        def removeCurrDialogue():
+                if ((len(currentAreaConvo.returnStrList())-1) > 0):
+                    st.session_state['listOfAreaConvo'][currentAreaConvoSelect].removeDialogue(dialogueSelectTheIndex)
+                else:
+                    st.warning('AREA CONVO ERROR: Must have at least one dialogue box', icon="⚠️")
+
+        removeDialogue = st.button("Remove dialogue box", key='removeDialogueButton', on_click=removeCurrDialogue, help="Remove current dialogue box")
 
             
     #dialogueSelectTheIndex
